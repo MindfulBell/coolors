@@ -1,10 +1,9 @@
 // https://github.com/diegohaz/arc/wiki/Atomic-Design
-import React from 'react'
+import React from 'react';
+import Board from '../../Board';
 
 const HomePage = () => {
-  return (
-    <div>Hello World</div>
-  )
-}
+  return <Board />;
+};
 
-export default HomePage
+export default HomePage;
