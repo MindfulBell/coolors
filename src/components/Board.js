@@ -61,6 +61,7 @@ class Board extends Component {
     return Math.floor(Math.random() * (max - min)) + min;
   };
 
+  // rm later. 
   addCircle = () => {
     const { circles } = this.state;
     const nextCircle = {

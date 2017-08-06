@@ -17,14 +17,15 @@ const Circle = ({ color, coords: { x, y }, delay }) => {
     height: 50px;
     width: 50px;
     border-radius: 50%;
-    transition: box-shadow 200ms linear, top 200ms linear;
+    top: 0;
+    transition: box-shadow 200ms linear;
     transform: translate(225px, 225px);
     animation: 300ms ease-in-out ${delay}ms ${slideOut};
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
+    cursor: pointer;
     &:hover {
-      box-shadow: 0px 2px 4px grey;
-      top: -5px;
+      box-shadow: 0px 5px 8px grey;
     }
   `;
   return <StyledCircle />;
