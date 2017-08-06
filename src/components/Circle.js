@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 
-const Circle = ({ color, coords: { x, y }, delay }) => {
+const Circle = ({ color: { r, g, b }, coords: { x, y }, delay, nextEntry }) => {
   const slideOut = keyframes`
     from {
       transform: translate(225px, 225px);
@@ -13,14 +13,14 @@ const Circle = ({ color, coords: { x, y }, delay }) => {
   `;
   const StyledCircle = styled.div`
     position: absolute;
-    background-color: ${color};
+    background-color: rgb(${r}, ${g}, ${b});
     height: 50px;
     width: 50px;
     border-radius: 50%;
     top: 0;
     transition: box-shadow 200ms linear;
     transform: translate(225px, 225px);
-    animation: 300ms ease-in-out ${delay}ms ${slideOut};
+    animation: ${!nextEntry ? `300ms ease-in-out ${delay}ms ${slideOut}` : null};
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
     cursor: pointer;
@@ -34,11 +34,8 @@ const Circle = ({ color, coords: { x, y }, delay }) => {
 Circle.propTypes = {
   coords: PropTypes.object.isRequired,
   delay: PropTypes.number.isRequired,
-  color: PropTypes.string.isRequired,
-};
-
-Circle.defaultProps = {
-  coords: { x: 0, y: 0 },
+  color: PropTypes.object.isRequired,
+  nextEntry: PropTypes.bool,
 };
 
 export default Circle;

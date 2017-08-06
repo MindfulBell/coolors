@@ -30,12 +30,11 @@ class Board extends Component {
   }
 
   getCircles() {
+    // get initial 3 circles. one R dominant, G Dominant, B dominant;
     const circles = [];
-    for (let i = 0; i < 3; i++) {
-      circles.push({
-        color: this.getRGB(),
-      });
-    }
+    circles.push(this.getRGB('r'));
+    circles.push(this.getRGB('g'));
+    circles.push(this.getRGB('b'));
     this.setState({
       circles,
     });
@@ -50,25 +49,67 @@ class Board extends Component {
   }
 
   // to util func
-  getRGB() {
-    return `rgb(${this.getRandom()}, ${this.getRandom()}, ${this.getRandom()})`;
+  getRGB(dominantColor) {
+    let r;
+    let g;
+    let b;
+    switch (dominantColor) {
+      case 'r':
+        r = this.getRandom(150, 256);
+        g = this.getRandom(0, 256);
+        b = this.getRandom(0, 256);
+      break;
+      case 'g':
+        r = this.getRandom(0, 256);
+        g = this.getRandom(255, 256);
+        b = this.getRandom(0, 256);
+      break;
+      default:
+        r = this.getRandom(0, 256);
+        g = this.getRandom(0, 256);
+        b = this.getRandom(150, 256);
+    }
+    return { r, g, b };
   }
 
+  getMixedColor = (color1, color2) => {
+    const color1Larger = color1 >= color2;
+    const diff = Math.floor(Math.abs((color1 - color2) / 2));
+    return color1Larger ? color1 - diff : color1 + diff;
+  };
+
   // to util func
-  getRandom = () => {
-    const min = Math.ceil(1);
-    const max = Math.floor(255);
+  getRandom = (min, max) => {
     return Math.floor(Math.random() * (max - min)) + min;
   };
 
-  // rm later. 
-  addCircle = () => {
+  // rm later.
+  // addCircle = () => {
+  //   const { circles } = this.state;
+  //   const nextCircle = {
+  //     color: this.getRGB(),
+  //   };
+  //   this.setState({
+  //     circles: [...circles, nextCircle],
+  //   });
+  // };
+
+  getNextEntry = () => {
     const { circles } = this.state;
-    const nextCircle = {
-      color: this.getRGB(),
-    };
+    const max = circles.length;
+    const firstColor = this.getRandom(0, max);
+    let secondColor = this.getRandom(0, max);
+    while (secondColor === firstColor) {
+      secondColor = this.getRandom(0, max);
+    }
+
+    const nextEntry = {};
+    Object.keys(circles[0]).forEach((key) => {
+      nextEntry[key] = this.getMixedColor(circles[firstColor][key], circles[secondColor][key]);
+    });
+
     this.setState({
-      circles: [...circles, nextCircle],
+      circles: [...circles, nextEntry],
     });
   };
 
@@ -79,15 +120,21 @@ class Board extends Component {
     return (
       <div>
         <StyledBoard>
-          {circles.map(({ color }, idx) => {
+          {circles.map(({ r, g, b }, idx) => {
             const x = this.getXCoord(idx, step);
             const y = this.getYCoord(idx, step);
             return (
-              <Circle key={color} color={color} coords={{ x, y }} delay={(idx * 200) + 200} />
+              <Circle
+                key={`${r}, ${g}, ${b}`}
+                nextEntry={idx === circles.length - 1}
+                color={{ r, g, b }}
+                coords={{ x, y }}
+                delay={(idx * 200) + 200}
+              />
             );
           })}
         </StyledBoard>
-        <button onClick={this.addCircle}>Click to add circle</button>
+        <button onClick={this.getNextEntry}>Click to add circle</button>
       </div>
     );
   }
@@ -101,4 +148,13 @@ hard coded values that need to be a constant/changeable:
 width / height of board 500
 width / height of each circle 50px
 radius of board 100
+ */
+
+
+/*
+grab 2 of the RGBs at random
+get their halfway color
+  for each number of rgba
+    find difference between them / 2
+    add that # to the lower of the two numbers (or subtract from higher of 2)
  */
