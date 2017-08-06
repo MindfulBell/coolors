@@ -35,9 +35,8 @@ class Board extends Component {
     circles.push(this.getRGB('r'));
     circles.push(this.getRGB('g'));
     circles.push(this.getRGB('b'));
-    this.setState({
-      circles,
-    });
+    this.setState(() => ({ circles }));
+    this.getNextEntry();
   }
 
   getXCoord(idx, step) {
@@ -55,7 +54,7 @@ class Board extends Component {
     let b;
     switch (dominantColor) {
       case 'r':
-        r = this.getRandom(150, 256);
+        r = this.getRandom(255, 256);
         g = this.getRandom(0, 256);
         b = this.getRandom(0, 256);
       break;
@@ -67,7 +66,7 @@ class Board extends Component {
       default:
         r = this.getRandom(0, 256);
         g = this.getRandom(0, 256);
-        b = this.getRandom(150, 256);
+        b = this.getRandom(255, 256);
     }
     return { r, g, b };
   }
@@ -116,7 +115,7 @@ class Board extends Component {
   render() {
     const { circles } = this.state;
     if (!circles) return null;
-    const step = (2 * Math.PI) / circles.length;
+    const step = (2 * Math.PI) / (circles.length - 1);
     return (
       <div>
         <StyledBoard>
