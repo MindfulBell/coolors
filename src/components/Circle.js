@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 
-const Circle = ({ color: { r, g, b }, coords: { x, y }, delay, nextEntry }) => {
+const Circle = ({ color: { r, g, b }, coords: { x, y }, delay, nextEntry, handleCircleClick, position }) => {
   const slideOut = keyframes`
     from {
       transform: translate(225px, 225px);
@@ -28,7 +28,11 @@ const Circle = ({ color: { r, g, b }, coords: { x, y }, delay, nextEntry }) => {
       box-shadow: 0px 5px 8px grey;
     }
   `;
-  return <StyledCircle />;
+
+  const handleClick = () => {
+    handleCircleClick(position);
+  };
+  return <StyledCircle onClick={handleClick} />;
 };
 
 Circle.propTypes = {
@@ -36,6 +40,8 @@ Circle.propTypes = {
   delay: PropTypes.number.isRequired,
   color: PropTypes.object.isRequired,
   nextEntry: PropTypes.bool,
+  handleCircleClick: PropTypes.func.isRequired,
+  position: PropTypes.number.isRequired,
 };
 
 export default Circle;

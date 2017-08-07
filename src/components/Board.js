@@ -21,7 +21,9 @@ class Board extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      userGuess: [],
+    };
     this.radius = 100;
   }
 
@@ -36,7 +38,8 @@ class Board extends Component {
     circles.push(this.getRGB('g'));
     circles.push(this.getRGB('b'));
     this.setState(() => ({ circles }));
-    this.getNextEntry();
+    // hack for now, need to figure this out.
+    setTimeout(() => { this.getNextEntry(); }, 1);
   }
 
   getXCoord(idx, step) {
@@ -82,38 +85,43 @@ class Board extends Component {
     return Math.floor(Math.random() * (max - min)) + min;
   };
 
-  // rm later.
-  // addCircle = () => {
-  //   const { circles } = this.state;
-  //   const nextCircle = {
-  //     color: this.getRGB(),
-  //   };
-  //   this.setState({
-  //     circles: [...circles, nextCircle],
-  //   });
-  // };
-
   getNextEntry = () => {
     const { circles } = this.state;
     const max = circles.length;
-    const firstColor = this.getRandom(0, max);
-    let secondColor = this.getRandom(0, max);
-    while (secondColor === firstColor) {
-      secondColor = this.getRandom(0, max);
+    const firstIdx = this.getRandom(0, max);
+    let secondIdx = this.getRandom(0, max);
+    while (secondIdx === firstIdx) {
+      secondIdx = this.getRandom(0, max);
     }
 
     const nextEntry = {};
     Object.keys(circles[0]).forEach((key) => {
-      nextEntry[key] = this.getMixedColor(circles[firstColor][key], circles[secondColor][key]);
+      nextEntry[key] = this.getMixedColor(circles[firstIdx][key], circles[secondIdx][key]);
     });
 
     this.setState({
       circles: [...circles, nextEntry],
+      rightAnswer: [firstIdx, secondIdx],
     });
   };
 
+  userGuess = (circlePos) => {
+    const { userGuess } = this.state;
+    const indexOfGuess = userGuess.indexOf(circlePos);
+    if (!indexOfGuess > -1) {
+      this.setState({
+        userGuess: [...userGuess, circlePos],
+      });
+    } else {
+      const filteredGuess = userGuess.filter((pos, idx) => idx !== indexOfGuess);
+      this.setState({
+        userGuess: filteredGuess,
+      });
+    }
+  };
+
   render() {
-    const { circles } = this.state;
+    const { circles, userGuess } = this.state;
     if (!circles) return null;
     const step = (2 * Math.PI) / (circles.length - 1);
     return (
@@ -124,14 +132,20 @@ class Board extends Component {
             const y = this.getYCoord(idx, step);
             return (
               <Circle
-                key={`${r}, ${g}, ${b}`}
+                key={`${r}, ${g}, ${b}, ${idx},`}
                 nextEntry={idx === circles.length - 1}
+                position={idx}
                 color={{ r, g, b }}
                 coords={{ x, y }}
                 delay={(idx * 200) + 200}
+                handleCircleClick={this.userGuess}
+                currentGuess={circles.indexOf(idx) > -1}
               />
             );
           })}
+          {userGuess.length === 2 ? (
+            <button onClick={this.submitGuess}>Confirm</button>
+          ) : null}
         </StyledBoard>
         <button onClick={this.getNextEntry}>Click to add circle</button>
       </div>
